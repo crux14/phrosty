@@ -110,17 +110,17 @@ int main(int argc, char** argv) {
             timer->setInterval(100);
             QObject::connect(timer.data(), &QTimer::timeout, [rest_count, timer, parent_win]() {
                 if (phrosty::is_active_window(parent_win)) {
-                    PHLOG_INFON("Parent window successfully raised!");
+                    PHLOG_DEBUGN("Parent window successfully raised!");
                     timer->stop();
                 }
                 if (*rest_count < 1) {
-                    PHLOG_ERRORN("TIMEOUT");
+                    PHLOG_DEBUGN("TIMEOUT");
                     // [TODO] need clear()?
                     timer->stop();
                 } else {
                     phrosty::raise_window(parent_win);
                     (*rest_count)--;
-                    PHLOG_INFO("...raising parent window: {}", *rest_count);
+                    PHLOG_DEBUG("...raising parent window: {}", *rest_count);
                 }
             });
             phrosty::raise_window(parent_win);
