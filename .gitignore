@@ -1,0 +1,16 @@
+build/
+release/
+work/
+dist/
+shared_temp/
+shared_credits/
+
+*.sh
+!version.sh
+
+# binary
+*.mp3
+*.wav
+*.mp4
+
+memo.md
