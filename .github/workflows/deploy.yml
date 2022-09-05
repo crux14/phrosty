@@ -1,0 +1,68 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - 'deploy_test'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+env:
+  BIN_ARCHIVE: "bin_archive" # read only
+
+jobs:
+  build-sdist:
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/crux14/phrosty/build-phrosty:0.1.2
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+    env:
+      BIN_ARCHIVE_BASENAME: "bin_archive"
+      BIN_ARCHIVE_PATH: ""
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Validate version
+        if: "! contains(github.ref, 'deploy_test')"
+        run: |
+          TAG_VER=`git describe --tags | sed 's/v//'`
+          MOD_VER=`cat VERSION`
+          echo TAG_VER=$TAG_VER, MOD_VER=$MOD_VER
+          test $TAG_VER = $MOD_VER
+          echo "BIN_ARCHIVE_BASENAME=phrosty-amd64-${TAG_VER}" >> $GITHUB_ENV
+
+      - name: Build archive
+        run: |
+          mkdir build dist && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../${{ env.BIN_ARCHIVE_BASENAME }}
+          ninja -j$(nproc)
+          ninja install
+          cd ../ && tar -zcvf ${{ env.BIN_ARCHIVE_BASENAME }}.tar.gz ${{ env.BIN_ARCHIVE_BASENAME }}
+          echo "BIN_ARCHIVE_PATH=${{ env.BIN_ARCHIVE_BASENAME }}.tar.gz" >> $GITHUB_ENV
+
+      - name: Upload archive as an artifact
+        if: "contains(github.ref, 'deploy_test')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.BIN_ARCHIVE_PATH }}
+          path: ${{ env.BIN_ARCHIVE_PATH }}
+          if-no-files-found: error
+
+      - name: Upload archive to release
+        if: "! contains(github.ref, 'deploy_test')"
+        run: |
+          TAG_NAME=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
+          echo $TAG_NAME
+          RELEASE_ID=$(curl --fail -X GET \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -H "Authorization: Bearer ${{ secrets.GH_API_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${TAG_NAME}" | jq -r '.id')
+          echo $RELEASE_ID
+          curl --fail -X POST \
+            --data-binary @${{ env.BIN_ARCHIVE_PATH }} \
+            -H 'Content-Type: application/x-gzip' \
+            -H "Authorization: Bearer ${{ secrets.GH_API_TOKEN }}" \
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}/assets?name=${{ env.BIN_ARCHIVE_PATH }}&label=${{ env.BIN_ARCHIVE_PATH }}"
+
