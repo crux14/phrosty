@@ -3,4 +3,4 @@ Type=Application
 Name=Phrosty
 GenericName=Phrosty
 Icon=Phrosty
-NoDisplay=false
+NoDisplay=true
