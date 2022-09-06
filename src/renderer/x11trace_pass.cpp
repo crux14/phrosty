@@ -1,5 +1,7 @@
 #include "./x11trace_pass.h"
 
+#include <core/logger.h>
+
 #include "./item.h"
 
 #include "./gl_common.h"
@@ -40,12 +42,12 @@ namespace phrosty {
         if (log_length > 1) {
             log_str = static_cast<GLchar*>(calloc(log_length + 1, sizeof(GLchar)));
             glGetShaderInfoLog(shader, log_length, nullptr, log_str);
-            printf("Shader compile log: %s\n", log_str);
+            PHLOG_ERROR("Shader compile log: {}", log_str);
         }
 
         if (!compile_status) {
-            printf("compile_attach_shader()<type=%d> failed: Failed to compile shader: %d", type,
-                   compile_status);
+            PHLOG_ERROR("compile_attach_shader()<type={}> failed: Failed to compile shader: {}",
+                        type, compile_status);
             res = false;
             goto exit;
         }
@@ -73,7 +75,7 @@ namespace phrosty {
         if (!link_status) {
             GLchar* log_str = static_cast<GLchar*>(calloc(log_length + 1, sizeof(GLchar)));
             glGetProgramInfoLog(prog, log_length, nullptr, log_str);
-            printf("Failed to link shader: %d, %s\n", link_status, log_str);
+            PHLOG_ERROR("Failed to link shader: {}, {}", link_status, log_str);
             free(log_str);
             return false;
         } else {

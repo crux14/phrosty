@@ -1,6 +1,7 @@
 #include "./x11trace_texture.h"
 
 #include <core/state.h>
+#include <core/logger.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -19,16 +20,9 @@ namespace phrosty {
                               XWindowAttributes& ret_attrib, Display* disp, XID xid) {
         Status s = XGetWindowAttributes(disp, xid, &ret_attrib);
         if (s == 0) {
-            printf("Fail to get window attributes!\n");
+            PHLOG_ERRORN("Failed to get window attributes");
             return false;
         }
-
-        // XRenderPictFormat* format = XRenderFindVisualFormat(display, attrib.visual);
-        // int width = attrib.width;
-        // int height = attrib.height;
-        // int depth = attrib.depth;
-
-        // printf("%d, %d, %d\n", width, height, depth);
 
         auto visualid = XVisualIDFromVisual(ret_attrib.visual);
 
@@ -75,7 +69,7 @@ namespace phrosty {
         }
 
         if (config == nfbconfigs) {
-            printf("Could not find suitable fbconfig");
+            PHLOG_ERRORN("No suitable fbconfig is found");
             return false;
         }
 
@@ -110,8 +104,10 @@ namespace phrosty {
         // Check if Composite extension is enabled
         int event_base_return;
         int error_base_return;
-        if (XCompositeQueryExtension(display, &event_base_return, &error_base_return)) {
-            // printf("COMPOSITE IS ENABLED!\n");
+        if (!XCompositeQueryExtension(display, &event_base_return, &error_base_return)) {
+            // [TODO] throw exception?
+            PHLOG_ERRORN("XCompositeQueryExtension() failed");
+            return;
         }
 
         XCompositeRedirectWindow(display, xid, CompositeRedirectAutomatic);
@@ -165,9 +161,6 @@ namespace phrosty {
             XEvent ev;
             XNextEvent(m_priv->display, &ev);
             if (ev.type == ConfigureNotify) {
-                // printf("ConfigureNotify: width: %d, height: %d\n", ev.xconfigure.width,
-                //        ev.xconfigure.height);
-
                 if (m_priv) {
                     glXDestroyGLXPixmap(m_priv->display, m_priv->glx_pixmap);
                     XFreePixmap(m_priv->display, m_priv->x_pixmap);
