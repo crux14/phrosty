@@ -10,7 +10,7 @@
 
 namespace phrosty {
     bool cli_parse(int* status, int argc, char** argv) {
-        CLI::App app{"Phrosty: A global Picture-in-Picture (PiP) tool for Linux\n"};
+        CLI::App app{"Phrosty: A global Picture-in-Picture (PiP) tool for Linux\n", "phrosty"};
 
         app.add_flag_callback(
             "--version", []() { throw CLI::CallForVersion(); }, "Show version");
