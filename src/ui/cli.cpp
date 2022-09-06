@@ -37,14 +37,14 @@ namespace phrosty {
                "Set initial window opacity")
             ->check(CLI::Range(0.1, 1.0));
 
-        app.add_option_function<unsigned int>(
-               "--topmost",
-               [](const auto& arg) {
-                   State::get().set_ui_state_synced(
-                       [arg](UIState& us) { us.topmost = arg == 1 ? true : false; });
-               },
-               "Enable topmost window mode if 1 provided")
-            ->check(CLI::Range(0, 1));
+        // app.add_option_function<unsigned int>(
+        //        "--topmost",
+        //        [](const auto& arg) {
+        //            State::get().set_ui_state_synced(
+        //                [arg](UIState& us) { us.topmost = arg == 1 ? true : false; });
+        //        },
+        //        "Enable topmost window mode if 1 provided")
+        //     ->check(CLI::Range(0, 1));
 
         app.add_option_function<unsigned int>(
                "--show-notification",

@@ -22,7 +22,7 @@ namespace phrosty {
     struct UIState {
         std::pair<int, int> init_win_resolution = {640, 360};
         double opacity = 1.0;
-        bool topmost = false;
+        bool topmost = true;
         bool show_notification = true;
         std::string border = "";
     };
