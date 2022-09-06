@@ -55,6 +55,15 @@ namespace phrosty {
                "Enable notification if 1 provided")
             ->check(CLI::Range(0, 1));
 
+        app.add_option_function<unsigned int>(
+               "--use-default-border",
+               [](const auto& arg) {
+                   State::get().set_ui_state_synced(
+                       [arg](UIState& us) { us.use_default_border = arg == 1 ? true : false; });
+               },
+               "Enable default window border")
+            ->check(CLI::Range(0, 1));
+
         app.add_option_function<std::string>(
             "--border",
             [](const std::string& arg) {

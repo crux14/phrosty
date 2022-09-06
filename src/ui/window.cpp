@@ -23,14 +23,7 @@
 
 namespace phrosty {
 
-    Window::Window(QWidget* parent) : QFrame(parent) {
-        this->setObjectName("window");
-
-        auto ui_state = State::get().ui_state_synced();
-        auto render_state = State::get().render_state_synced();
-
-        QString border_css =
-            ui_state.border.length() > 0 ? QString::fromStdString(ui_state.border) : u8R"(
+    static QString DEFAULT_BORDER_CSS = u8R"(
             border-width: 2px;
             border-style: solid;
             border-color:
@@ -39,6 +32,17 @@ namespace phrosty {
                 qlineargradient(x1:0, y1:0, x2:1, y2:0, stop: 0 #00DBAC, stop: 1 #F850A3)
                 #00DBAC;
         )";
+
+    Window::Window(QWidget* parent) : QFrame(parent) {
+        this->setObjectName("window");
+
+        auto ui_state = State::get().ui_state_synced();
+        auto render_state = State::get().render_state_synced();
+
+        QString border_css =
+            (ui_state.use_default_border    ? DEFAULT_BORDER_CSS
+             : ui_state.border.length() > 0 ? QString::fromStdString(ui_state.border)
+                                            : "border: none");
 
         this->setStyleSheet("#window {" + border_css + "}");
         this->setFrameShadow(QFrame::Raised);

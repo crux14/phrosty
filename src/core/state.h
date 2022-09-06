@@ -24,6 +24,7 @@ namespace phrosty {
         double opacity = 1.0;
         bool topmost = true;
         bool show_notification = true;
+        bool use_default_border = false;
         std::string border = "";
     };
 
