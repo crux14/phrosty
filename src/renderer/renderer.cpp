@@ -59,10 +59,6 @@ namespace phrosty {
 
         m_ctx->trace_tex->poll_events();
 
-        // if (glfwGetTime() - lasttime < (1.0 / phrosty_conf.fps)) {
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(2));
-        //     return false;
-        // }
         {
             m_ctx->trace_pass->begin();
 
