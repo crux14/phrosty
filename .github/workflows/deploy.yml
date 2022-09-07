@@ -36,7 +36,7 @@ jobs:
       - name: Build archive
         run: |
           mkdir build dist && cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../${{ env.BIN_ARCHIVE_BASENAME }}
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../${{ env.BIN_ARCHIVE_BASENAME }} -GNinja
           ninja -j$(nproc)
           ninja install
           cd ../ && tar -zcvf ${{ env.BIN_ARCHIVE_BASENAME }}.tar.gz ${{ env.BIN_ARCHIVE_BASENAME }}

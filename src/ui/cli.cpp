@@ -10,7 +10,7 @@
 
 namespace phrosty {
     bool cli_parse(int* status, int argc, char** argv) {
-        CLI::App app{"Phrosty: A global Picture-in-Picture (PiP) tool for Linux\n"};
+        CLI::App app{"Phrosty: A global Picture-in-Picture (PiP) tool for Linux\n", "phrosty"};
 
         app.add_flag_callback(
             "--version", []() { throw CLI::CallForVersion(); }, "Show version");
@@ -37,14 +37,14 @@ namespace phrosty {
                "Set initial window opacity")
             ->check(CLI::Range(0.1, 1.0));
 
-        app.add_option_function<unsigned int>(
-               "--topmost",
-               [](const auto& arg) {
-                   State::get().set_ui_state_synced(
-                       [arg](UIState& us) { us.topmost = arg == 1 ? true : false; });
-               },
-               "Enable topmost window mode if 1 provided")
-            ->check(CLI::Range(0, 1));
+        // app.add_option_function<unsigned int>(
+        //        "--topmost",
+        //        [](const auto& arg) {
+        //            State::get().set_ui_state_synced(
+        //                [arg](UIState& us) { us.topmost = arg == 1 ? true : false; });
+        //        },
+        //        "Enable topmost window mode if 1 provided")
+        //     ->check(CLI::Range(0, 1));
 
         app.add_option_function<unsigned int>(
                "--show-notification",
@@ -53,6 +53,15 @@ namespace phrosty {
                        [arg](UIState& us) { us.show_notification = arg == 1 ? true : false; });
                },
                "Enable notification if 1 provided")
+            ->check(CLI::Range(0, 1));
+
+        app.add_option_function<unsigned int>(
+               "--use-default-border",
+               [](const auto& arg) {
+                   State::get().set_ui_state_synced(
+                       [arg](UIState& us) { us.use_default_border = arg == 1 ? true : false; });
+               },
+               "Enable default window border")
             ->check(CLI::Range(0, 1));
 
         app.add_option_function<std::string>(

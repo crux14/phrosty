@@ -4,6 +4,7 @@ work/
 dist/
 shared_temp/
 shared_credits/
+PreLoad.cmake
 
 *.sh
 !version.sh
