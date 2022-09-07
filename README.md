@@ -1,4 +1,4 @@
-![title_top](https://user-images.githubusercontent.com/70841910/188854698-7a2a4b7e-bae5-4723-bf7b-628ab14c97ae.png)
+![title_top_no_actionbar](https://user-images.githubusercontent.com/70841910/188877820-e27d58d9-1f4a-4eae-92f4-f8febd113d22.png)
 
 <h1 align="center">Phrosty</h1>
 <p align="center">
